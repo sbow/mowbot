@@ -63,6 +63,28 @@ for x in range(n_datum):
     else:
         avg_data[x] = datum
 
+# Detect Edges
+# edge == >EDGE with adjacent datum << than 999.99
+EDGE = 30
+edge_datum = np.zeros( 0 )
+edge_angle = np.zeros( 0 )
+for x in range(n_datum):
+    datum = avg_data[x]
+    if datum > EDGE:
+        if x > 0:
+            if avg_data[x-1] < EDGE:
+                edge_datum = np.append( edge_datum, avg_data[x-1] )
+                edge_angle = np.append( edge_angle, angles[x-1] )
+            if x < n_datum-1:
+                if avg_data[x+1] < EDGE:
+                    edge_datum = np.append( edge_datum, avg_data[x+1] )
+                    edge_angle = np.append( edge_angle, angles[x+1] )
+
+# Detect Edges v2 - not done, filter out edges if radial distance to valid
+# neibor is less than threshold
+
+
+
 # output:
 print len(angles)
 print len(data[0])
@@ -78,3 +100,7 @@ ax.plot(angles, data[0], 'r')
 ax.set_rmax(4)
 plt.show()
 
+ax2 = plt.subplot(111, projection='polar')
+ax2.plot(angles, avg_data, 'b', edge_angle, edge_datum, 'r*')
+ax2.set_rmax(4)
+plt.show()
