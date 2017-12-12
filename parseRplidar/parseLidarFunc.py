@@ -130,6 +130,8 @@ def getRpData():
                     filt_data[i_remove[x]] = filt_r
                     filt_valid_data[i_remove[x]] = filt_r
 
+    # Filter out remaining valid signals using a "use last good" strategy >
+    # hack.def
     temp_datum = 0
     for x in range(len(filt_data)):
         curr_datum = filt_data[x]
