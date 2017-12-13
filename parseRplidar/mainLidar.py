@@ -9,7 +9,7 @@ angles, rpData, rpValidData = parseLidarFunc.getRpData()
 
 fig = plt.figure()
 ax2 = fig.add_subplot(111, projection='polar')
-line1, = ax2.plot(angles, rpValidData, 'r')
+line1, = ax2.plot(angles, rpData, 'r')
 ax2.set_rmax(4)
 plt.show()
 
