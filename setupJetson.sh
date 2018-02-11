@@ -35,3 +35,9 @@ sudo apt-get install libi2c-dev
 sudo apt-get install build-essential qt5-default qtcreator
 git clone https://github.com/jetsonhacks/RTIMULib.git ~/git/RTIMULib
 
+# get stdr_simulator & turtle_teleop (robot simulator & keyboard interface)
+# note: some errors in apt-get teleop, but seems to work alight
+# more setup needed to use teleop, create package http://wiki.ros.org/ROS/Tutorials/CreatingPackage
+# setup package http://wiki.ros.org/ROS/Tutorials/CreatingPackage
+sudo apt-get install ros-kinetic-stdr-simulator
+sudo apt-get install ros-kinetic-turtlebot-teleop
