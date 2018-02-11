@@ -145,4 +145,4 @@ def getRpData():
 
         #filt_valid_data[x] = max( [0.15, min( [8.0, filt_data[x] ] ) ] )
 
-    return(angles, filt_data, filt_valid_data)
+    return(angles, filt_data, filt_valid_data, avg_data)
