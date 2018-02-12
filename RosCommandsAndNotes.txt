@@ -1,0 +1,25 @@
+# STDR Robot Simulator:
+roslaunch stdr_launchers server_with_map_and_gui_plus_robot.launch 
+
+# STDR Robot Rviz:
+roslaunch stdr_launchers rviz.launch
+
+# STDR - Teleop Turtlebot Interface:
+roslaunch stdr_tele stdr_keyboard.launch
+
+# STDR - Simple Controller Python Script
+~/home/nvidia/myCatkin/src$ python stopper.py
+
+# STDR - Tutorials
+http://wiki.ros.org/stdr_simulator/Tutorials
+
+# STDR - Move Robot
+rosrun stdr_robot robot_handler replace /robot0 2 2 0
+
+# STDR - Delete Robot
+rosrun stdr_robot robot_handler delete /robot0
+
+# STDR - Add Robot
+rosrun stdr_robot robot_handler add resources/robots/pandora_robot.yaml 9 7 1.57
+
+
