@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # LaserHandler.py
-# Shaun Bowman
+# Author: Shaun Bowman
 # Feb 11 2018
 # Handler for ROS sensor_msgs/LaserScan
 
@@ -79,6 +79,7 @@ class LaserHandler:
                     if not found_max:
                         self.roi_last_elem = i
                         found_max = True
+                temp_range = temp_range + self.angle_increment
 
             self.ranges = [None]*len( range( (self.roi_first_elem - len(self.raw_ranges)) + self.roi_last_elem))
 
@@ -92,9 +93,6 @@ class LaserHandler:
 
 if __name__ == '__main__':
     rospy.init_node('LaserHandler')
-
-    # Get the distance from the parameter server.  Default is 0.5
-    distance = rospy.get_param('distance', 0.5)
 
     # Set up the LaserHandler
     laser_handler = LaserHandler()

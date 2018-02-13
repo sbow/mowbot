@@ -22,4 +22,8 @@ rosrun stdr_robot robot_handler delete /robot0
 # STDR - Add Robot
 rosrun stdr_robot robot_handler add resources/robots/pandora_robot.yaml 9 7 1.57
 
+# ROS - Creating a Package
+cd ~/catkin_ws/src #<-- or whatever ws directory is
+catkin_create_pkg {name} std_msgs rospy roscpp
+catkin_make
 
