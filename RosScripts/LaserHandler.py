@@ -18,7 +18,7 @@ from sensor_msgs.msg import LaserScan
 class LaserHandler:
     def __init__(self, raw_laser_topic='robot0/laser_0',\
                  angle_min=-2*3.14*1/4,\
-                 angle_max=2*3.14*1/4):
+                 angle_max=2*3.14*1/4, tf_frame_id='robot0_laser_0'):
         # Setup internal parameters of the LaserHandler
         # Assumes angle_min < 0
         # angle_max > 0, ie: center is 0 radians, angle_min is start of ROI &
@@ -31,9 +31,10 @@ class LaserHandler:
         self.scan_time = 0.0        # time between scans
         self.range_min = 0.0        # min range for range measurements
         self.range_max = 0.0        # max range for range measurements
-        self.ranges = 0             # ranges after signal conditioning
         self.raw_ranges = 0.0       # ranges prior to signal conditioning
 
+        self.ranges = 0             # ranges after signal conditioning
+        self.roi_intensities = 0        # intensities in roi
         self.roi_angle_min = angle_min  # min angle of interest
         self.roi_angle_max = angle_max  # max angle of interest
         self.roi_first_elem = 0     # first array index in roi
@@ -41,10 +42,14 @@ class LaserHandler:
         self.roi_valid_elem = [None]    # boolean array if valid intensity
         self.roi_angles = [None]        # angles in roi
         self.raw_laser_topic = raw_laser_topic  # string of raw LaserScan topic
-        self.has_init = False        # has initialized (parsed 1st scan)
+        self.tf_id = tf_frame_id    # frame id of laser scan mesurements 
+        self.has_init = False       # has initialized (parsed 1st scan)
 
         # Subscriber for the laser data
         self.sub = rospy.Subscriber(raw_laser_topic, LaserScan, self.laser_handler_callback)
+
+        # Publisher for laser data
+        self.pub = rospy.Publisher('mowbot/scan', LaserScan, queue_size=50)
 
         # Let the world know we're ready
         rospy.loginfo('LaserHandler initialized')
@@ -64,6 +69,7 @@ class LaserHandler:
         self.range_min          = scan.range_min
         self.range_max          = scan.range_max
         self.raw_ranges         = scan.ranges           # pre signal conditioning copy
+        self.raw_intensities    = scan.intensities
 
         rospy.logdebug('Status: LaserHandler received scan')
 
@@ -74,15 +80,31 @@ class LaserHandler:
         # Parse raw laser data
         # this calls other internal methods defined elsewhere
         self.__roi_ranges()
-        self.__set_valid_thresh()
+        self.__find_valid_thresh()
+        self.__publish_scan()
 
         if not self.has_init:    # if was first scan call init complete
             self.has_init = True
 
+    def __publish_scan(self):
+        scan = LaserScan()
+        scan.header = self.header
+        scan.header.frame_id = 'robot0_laser_0'
+        scan.angle_min = self.roi_angle_min
+        scan.angle_max = self.roi_angle_max
+        scan.angle_increment = self.angle_increment
+        scan.time_increment = self.time_increment
+        scan.range_min = self.range_min
+        scan.range_max = self.range_max
+        scan.ranges = self.ranges
+        scan.intensities = self.roi_intensities
+
+        self.pub.publish(scan)
+
     def __roi_ranges(self):
         # limit self.ranges to roi_angle_min and roi_angle_max
-        # TODO: detect if user roi_angle_max/min is outside sensor angle
-        #       max/min
+        # if user min/max outside sensor min/max send debug message and set
+        # min/max roi to sensor min/max/both as needed
         if not self.has_init:
             if self.roi_angle_min < self.angle_min:
                 rospy.loginfo('user angle min {0} is less than sensor angle min \
@@ -111,7 +133,9 @@ class LaserHandler:
                 sweep_angle = sweep_angle + self.angle_increment
 
             self.ranges = [None]*len( range( self.roi_last_elem - self.roi_first_elem))
+            self.roi_intensities = [None]*len( range( self.roi_last_elem - self.roi_first_elem))
             self.roi_angles = [(self.roi_angle_min + self.angle_increment*i) for i in range( self.roi_last_elem - self.roi_first_elem)]
+
             #self.ranges = [None]*len( range( (self.roi_first_elem - len(self.raw_ranges)) + self.roi_last_elem))
             # Let the world know we're ready
 
@@ -129,8 +153,9 @@ class LaserHandler:
 
         # assign elements from raw_ranges to self.ranges if inside roi
         self.ranges = self.raw_ranges[self.roi_first_elem:self.roi_last_elem]
+        self.roi_intensities = self.raw_intensities[self.roi_first_elem:self.roi_last_elem]
 
-    def __set_valid_thresh(self):
+    def __find_valid_thresh(self):
         # sets roi_valid_elem false for elements outside range min / max
         if not self.has_init:
             self.roi_valid_elem = [True for i in range( len(self.ranges))]
@@ -149,11 +174,11 @@ if __name__ == '__main__':
     rospy.init_node('LaserHandler')
 
     # Set up the LaserHandler
-#     def __init__(self, raw_laser_topic='robot0/laser_0',\
-#                  angle_min=-2*3.14*1/4,\
-#                  angle_max=2*3.14*1/4)
-    laser_handler = LaserHandler('robot0/laser_0')
-#    laser_handler = LaserHandler('scan')
+    # def __init__(self, raw_laser_topic='robot0/laser_0',\
+    #              angle_min=-2*3.14*1/4,\
+    #              angle_max=2*3.14*1/4, tf_id='robot0_laser_0'):
+    laser_handler = LaserHandler('robot0/laser_0',-2*3.14*1/8,2*3.14*1/8)
+    #laser_handler = LaserHandler('scan',-2*3.14*1/8,2*3.14*1/8)
 
     # Hand control over to ROS
     rospy.spin()
