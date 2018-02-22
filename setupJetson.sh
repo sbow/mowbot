@@ -25,10 +25,14 @@ rosdep update
 #source /opt/ros/kinetic/setup.bash
 sudo apt-get install ros-kinetic-tutorials
 sudo apt-get install ros-kinetic-rqt
-sudo apt-get install ros-kenetic-rqt-common-plugins
+sudo apt-get install ros-kinetic-rqt-common-plugins
 
 # get rplidar ROS package
 git clone https://github.com/robopeak/rplidar_ros.git ~/git/rplidar_ros
+sudo apt-get install ros-kinetic-rviz
+sudo apt-get install ros-kinetic-robot-model
+echo "unset GTK_IM_MODULE" >> ~/.bashrc
+source ~/.bashrc
 
 # get libi2c-dev for accelerometer
 sudo apt-get install libi2c-dev
