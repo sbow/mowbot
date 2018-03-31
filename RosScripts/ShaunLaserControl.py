@@ -24,7 +24,7 @@ class Stopper:
 
         # Subscriber for the laser data
         #self.sub = rospy.Subscriber('robot0/laser_0', LaserScan, self.laser_callback)
-        self.sub = rospy.Subscriber('mowbot/scan', LaserScan, self.laser_callback)
+        self.sub = rospy.Subscriber('mowbot/clean_scan', LaserScan, self.laser_callback)
 
         # Publisher for movement commands
         self.pub = rospy.Publisher('robot0/cmd_vel', Twist)

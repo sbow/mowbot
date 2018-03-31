@@ -27,3 +27,8 @@ cd ~/catkin_ws/src #<-- or whatever ws directory is
 catkin_create_pkg {name} std_msgs rospy roscpp
 catkin_make
 
+# ROS - Display nodes
+rosrun rqt_graph rqt_graph
+
+# ROS - Update a package
+sudo apt-get --only-upgrade install ros-indigo-costmap-2d
