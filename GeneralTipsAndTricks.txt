@@ -1,0 +1,19 @@
+Ubuntu Unity - Add Desktop Icon:
+first, install: 
+sudo apt install gnome-panel
+Then, to add an icon:
+gnome-desktop-item-edit --create-new ~/Desktop/
+
+Gettin Info on USB Devices:
+lsusb
+sudo apt-get install input-utils
+sudo lsinput
+Getting more info:
+lsusb (get ID info)
+lsusb -d 2560:c120 -vvv 
+
+Get Dialog Text from Bootup:
+dmesg > klog.txt
+
+Updating a package:
+sudo apt-get --only-upgrade install ros-indigo-costmap-2d

@@ -18,7 +18,8 @@ from sensor_msgs.msg import LaserScan
 class LaserHandler:
     def __init__(self, raw_laser_topic='robot0/laser_0',\
                  angle_min=-2*3.14*1/4,\
-                 angle_max=2*3.14*1/4, tf_frame_id='robot0_laser_0'):
+                 angle_max=2*3.14*1/4, tf_frame_id='robot0_laser_0',
+                 publisher_name='mowbot/scan'):
         # Setup internal parameters of the LaserHandler
         # Assumes angle_min < 0
         # angle_max > 0, ie: center is 0 radians, angle_min is start of ROI &
@@ -43,13 +44,14 @@ class LaserHandler:
         self.roi_angles = [None]        # angles in roi
         self.raw_laser_topic = raw_laser_topic  # string of raw LaserScan topic
         self.tf_id = tf_frame_id    # frame id of laser scan mesurements 
+        self.pub_topic = publisher_name #ros topic name
         self.has_init = False       # has initialized (parsed 1st scan)
 
         # Subscriber for the laser data
         self.sub = rospy.Subscriber(raw_laser_topic, LaserScan, self.laser_handler_callback)
 
         # Publisher for laser data
-        self.pub = rospy.Publisher('mowbot/scan', LaserScan, queue_size=50)
+        self.pub = rospy.Publisher(self.pub_topic, LaserScan, queue_size=50)
 
         # Let the world know we're ready
         rospy.loginfo('LaserHandler initialized')
@@ -89,7 +91,7 @@ class LaserHandler:
     def __publish_scan(self):
         scan = LaserScan()
         scan.header = self.header
-        scan.header.frame_id = 'robot0_laser_0'
+        scan.header.frame_id = self.tf_id
         scan.angle_min = self.roi_angle_min
         scan.angle_max = self.roi_angle_max
         scan.angle_increment = self.angle_increment
@@ -176,8 +178,10 @@ if __name__ == '__main__':
     # Set up the LaserHandler
     # def __init__(self, raw_laser_topic='robot0/laser_0',\
     #              angle_min=-2*3.14*1/4,\
-    #              angle_max=2*3.14*1/4, tf_id='robot0_laser_0'):
-    laser_handler = LaserHandler('robot0/laser_0',-2*3.14*1/8,2*3.14*1/8)
+    #              angle_max=2*3.14*1/4, tf_frame_id='robot0_laser_0',
+    #              publisher_name='mowbot/scan'):
+    laser_handler = LaserHandler('robot0/laser_0',-2*3.14*1/8,2*3.14*1/8, \
+                                 'robot0_laser_0', 'mowbot/clean_scan')
     #laser_handler = LaserHandler('scan',-2*3.14*1/8,2*3.14*1/8)
 
     # Hand control over to ROS
