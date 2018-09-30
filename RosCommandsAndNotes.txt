@@ -32,3 +32,13 @@ rosrun rqt_graph rqt_graph
 
 # ROS - Update a package
 sudo apt-get --only-upgrade install ros-indigo-costmap-2d
+
+# ROS - Razor 9dof install
+{get 9dof from github, add to src in catkin ws, try catkin_make, in my case it didn't work because of a cv2 error, had to update a cv2 package, see above instruction}
+copy razor.yaml to my_razor.yaml
+{if you try and launch the razor launcher, it'll fail and complain about my_razor.yaml missing}
+next launcher display might not work when trying doing this:
+roslaunch razor_imu_9dof razor-pub-and-display.launch
+to fix try: 
+sudo apt-get install python-visual python-wxgtk3.0
+

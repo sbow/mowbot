@@ -28,6 +28,9 @@ high_threshold = 38
 
 def frameArray(newFrame):
 
+    pass
+
+
 
 while(1):
 

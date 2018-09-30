@@ -1,0 +1,6 @@
+Get mapping working:
+	Get hector_mapping mapped to appropriate frames, should be able to viz
+Get map saving working:
+	hector_geotiff
+	hector_trajectory_server
+
